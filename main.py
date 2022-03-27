@@ -33,11 +33,20 @@ def get_create_time(files_paths: list):
                 ),
             ]
         )
+    return files_created_time_list
+
+
+def sort_func(all_item_created_time_list: list):
+    pass
 
 
 def main():
-    get_create_time(get_all_txt_file_path())
-    get_create_time(get_all_image_file_path())
+    all_txt_file_created_time_list = get_create_time(get_all_txt_file_path())
+    all_image_file_created_time_list = get_create_time(get_all_image_file_path())
+    all_item_created_time_list = (
+        all_txt_file_created_time_list + all_image_file_created_time_list
+    )
+    pprint(all_item_created_time_list)
 
 
 main()
