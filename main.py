@@ -44,29 +44,64 @@ def sort_func(item: list):
 
 def gen_xml_file(all_item_created_time_list: list):
     # item[0] = item's path, item[1] = item's created time
-    for item in all_item_created_time_list:
-        get_machine_info_by_tet_file_name(item[0])
+    count = 0
+    tmp_list = list()
+    for i, item in enumerate(all_item_created_time_list):
 
-    root = minidom.Document()
+        if (
+            item[0][-3:] == "txt" and all_item_created_time_list[i + 1][0][-3:] == "jpg"
+        ) or i == len(all_item_created_time_list) - 1:
 
-    xml = root.createElement("Transaction")
-    xml.setAttribute("Name", "AIImageInfo")
-    root.appendChild(xml)
+            if i != 0:
+                root = minidom.Document()
 
-    productChild = root.createElement("product")
-    productChild.setAttribute("name", "Geeks for Geeks")
-    xml.appendChild(productChild)
+                xml = root.createElement("Transaction")
+                xml.setAttribute("Name", "AIImageInfo")
+                root.appendChild(xml)
 
-    www = root.createElement("www")
-    www.setAttribute("name", "www for Geeks")
-    productChild.appendChild(www)
+                for tag_ in [
+                    [log_point, "LogPint"],
+                    [machine_name, "MachineName"],
+                    [lot_number, "LotNumber"],
+                    [pin_package, "PinPackage"],
+                ]:
+                    tag = root.createElement(tag_[1])
+                    text = root.createTextNode(str(tag_[0]))
+                    tag.appendChild(text)
+                    xml.appendChild(tag)
 
-    # 儲存檔案
-    xml_str = root.toprettyxml(indent="\t")
-    save_path_file = "gfg.xml"
+                image_tag = root.createElement("IMAGE")
+                image_tag.setAttribute("Count", f"{len(tmp_list)}")
 
-    with open(save_path_file, "w") as f:
-        f.write(xml_str)
+                if len(tmp_list) >= 10:
+                    tmp_list = tmp_list[-10:]
+
+                for item in tmp_list[-10:]:
+                    tag = root.createElement("Item")
+                    text = root.createTextNode(
+                        f'{log_point}_{machine_name}_{lot_number}_{tmp_list.index(item)}_{item[1].replace("-", "").replace(":", "")}.tif'
+                    )
+                    tag.appendChild(text)
+                    image_tag.appendChild(tag)
+
+                xml.appendChild(image_tag)
+
+                xml_str = root.toprettyxml(indent="\t")
+                save_path_file = f"{count + 1}.xml"
+                count += 1
+                with open(save_path_file, "w") as f:
+                    f.write(xml_str)
+
+            tmp_list = list()
+            if i < len(all_item_created_time_list) - 1:
+                (
+                    log_point,
+                    machine_name,
+                    lot_number,
+                    pin_package,
+                ) = get_machine_info_by_tet_file_name(all_item_created_time_list[i][0])
+        elif i > 0:
+            tmp_list.append([item[0], item[1]])
 
 
 def rename():
@@ -80,7 +115,7 @@ def get_machine_info_by_tet_file_name(txt_file_path: str):
         log_point = txt_file_name_str_list[0]
         machine_name = txt_file_name_str_list[1]
         lot_number = txt_file_name_str_list[2]
-        pin_package = txt_file_name_str_list[3]
+        pin_package = txt_file_name_str_list[3].replace(".txt", "")
         return log_point, machine_name, lot_number, pin_package
 
 
@@ -90,9 +125,7 @@ def main():
     all_item_created_time_list = (
         all_txt_file_created_time_list + all_image_file_created_time_list
     )
-    # pprint(all_item_created_time_list)
     all_item_created_time_list = sorted(all_item_created_time_list, key=sort_func)
-    pprint(all_item_created_time_list)
     gen_xml_file(all_item_created_time_list)
 
 

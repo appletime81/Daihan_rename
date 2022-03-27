@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<Transaction Name="AIImageInfo">
+	<LogPint>6100</LogPint>
+	<MachineName>T-SY-F04</MachineName>
+	<LotNumber>4442221</LotNumber>
+	<PinPackage>44DAC</PinPackage>
+	<IMAGE Count="6">
+		<Item>6100_T-SY-F04_4442221_0_20220312222724.tif</Item>
+		<Item>6100_T-SY-F04_4442221_1_20220312222724.tif</Item>
+		<Item>6100_T-SY-F04_4442221_2_20220312222724.tif</Item>
+		<Item>6100_T-SY-F04_4442221_3_20220312222724.tif</Item>
+		<Item>6100_T-SY-F04_4442221_4_20220312222724.tif</Item>
+		<Item>6100_T-SY-F04_4442221_5_20220312222724.tif</Item>
+	</IMAGE>
+</Transaction>
