@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<Transaction Name="AIImageInfo">
+	<product name="Geeks for Geeks">
+		<www name="www for Geeks"/>
+	</product>
+</Transaction>
