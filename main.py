@@ -119,14 +119,29 @@ def get_machine_info_by_tet_file_name(txt_file_path: str):
         return log_point, machine_name, lot_number, pin_package
 
 
+def check_list_structure(item_list):
+    new_item_list = list()
+    for i, item in enumerate(item_list):
+        if item[:-3] == "txt" and item_list[i + 1][-3:] == "txt":
+            pass
+        else:
+            new_item_list.append(item)
+
+        if i == len(item_list) - 1 and item[-3:] == "txt":
+            pass
+    return new_item_list
+
+
 def main():
     all_txt_file_created_time_list = get_create_time(get_all_txt_file_path())
     all_image_file_created_time_list = get_create_time(get_all_image_file_path())
     all_item_created_time_list = (
         all_txt_file_created_time_list + all_image_file_created_time_list
     )
-    all_item_created_time_list = sorted(all_item_created_time_list, key=sort_func)
-    gen_xml_file(all_item_created_time_list)
+    if all_item_created_time_list:
+        all_item_created_time_list = sorted(all_item_created_time_list, key=sort_func)
+        all_item_created_time_list = check_list_structure(all_item_created_time_list)
+        gen_xml_file(all_item_created_time_list)
 
 
 main()
