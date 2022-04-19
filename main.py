@@ -122,7 +122,7 @@ def get_machine_info_by_tet_file_name(txt_file_path: str):
 def check_list_structure(item_list):
     new_item_list = list()
     for i, item in enumerate(item_list):
-        if item[:-3] == "txt" and item_list[i + 1][-3:] == "txt":
+        if item[:-3] == "txt" and item_list[i + 1][-3:] == "txt" and i != len(item_list) - 1:
             pass
         else:
             new_item_list.append(item)
