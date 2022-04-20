@@ -1,16 +1,12 @@
 <?xml version="1.0" ?>
 <Transaction Name="AIImageInfo">
-	<LogPint>6100</LogPint>
+	<LogPint>6200</LogPint>
 	<MachineName>T-SY-F04</MachineName>
 	<LotNumber>4098506</LotNumber>
 	<PinPackage>30DBT</PinPackage>
-	<IMAGE Count="7">
-		<Item>6100_T-SY-F04_4098506_0_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_1_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_2_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_3_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_4_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_5_20220312222304.tif</Item>
-		<Item>6100_T-SY-F04_4098506_6_20220312222304.tif</Item>
+	<IMAGE Count="3">
+		<Item>6200_T-SY-F04_4098506_1_20220419150418_Index6_2.jpg</Item>
+		<Item>6200_T-SY-F04_4098506_2_20220419150418_Index5_1.jpg</Item>
+		<Item>6200_T-SY-F04_4098506_3_20220419150418_Index5_1.jpg</Item>
 	</IMAGE>
 </Transaction>

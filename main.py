@@ -4,6 +4,7 @@ from pprint import pprint
 from datetime import datetime
 from xml.dom import minidom
 import xml.etree.ElementTree as ET
+import re
 
 
 def get_all_txt_file_path():
@@ -47,14 +48,15 @@ def gen_xml_file(all_item_created_time_list: list):
     count = 0
     tmp_list = list()
     for i, item in enumerate(all_item_created_time_list):
-
+        if item[0][-3:] != "txt":
+            if i > 0 or i == len(all_item_created_time_list) - 1:
+                tmp_list.append([item[0], item[1]])
         if (
-            item[0][-3:] == "txt" and all_item_created_time_list[i + 1][0][-3:] == "jpg"
+            item[0][-3:] == "txt"
+            and all_item_created_time_list[i + 1][0][-3:] == "jpg"
         ) or i == len(all_item_created_time_list) - 1:
-
             if i != 0:
                 root = minidom.Document()
-
                 xml = root.createElement("Transaction")
                 xml.setAttribute("Name", "AIImageInfo")
                 root.appendChild(xml)
@@ -78,8 +80,12 @@ def gen_xml_file(all_item_created_time_list: list):
 
                 for item in tmp_list[-10:]:
                     tag = root.createElement("Item")
+                    tmp_index_name = item[0].split("/")[-1]
+                    tmp_index_name = tmp_index_name[
+                        re.search("_Index\d+_\d+", tmp_index_name).start() :
+                    ]
                     text = root.createTextNode(
-                        f'{log_point}_{machine_name}_{lot_number}_{tmp_list.index(item)}_{item[1].replace("-", "").replace(":", "")}.tif'
+                        f'{log_point}_{machine_name}_{lot_number}_{tmp_list.index(item) + 1}_{item[1].replace("-", "").replace(":", "")}{tmp_index_name}'
                     )
                     tag.appendChild(text)
                     image_tag.appendChild(tag)
@@ -93,19 +99,40 @@ def gen_xml_file(all_item_created_time_list: list):
                     f.write(xml_str)
 
             tmp_list = list()
-            if i < len(all_item_created_time_list) - 1:
+            if item[0][-3:] == "txt":
                 (
                     log_point,
                     machine_name,
                     lot_number,
                     pin_package,
-                ) = get_machine_info_by_tet_file_name(all_item_created_time_list[i][0])
-        elif i > 0:
-            tmp_list.append([item[0], item[1]])
+                ) = get_machine_info_by_tet_file_name(
+                    all_item_created_time_list[i][0]
+                )
 
 
-def rename():
-    pass
+
+def rename(all_item_created_time_list):
+    count = 0
+    for i, item in enumerate(all_item_created_time_list):
+        print(i, item)
+        if item[0][-3:] == "txt":
+            (
+                log_point,
+                machine_name,
+                lot_number,
+                pin_package,
+            ) = get_machine_info_by_tet_file_name(all_item_created_time_list[i][0])
+            count = 0
+        else:
+            count += 1
+            tmp_index_name = item[0].split("/")[-1]
+            tmp_index_name = tmp_index_name[
+                re.search("_Index\d+_\d+", tmp_index_name).start() :
+            ]
+            os.rename(
+                item[0],
+                f'{os.getcwd()}/After_Convert/{log_point}_{machine_name}_{lot_number}_{count}_{item[1].replace("-", "").replace(":", "")}{tmp_index_name}',
+            )
 
 
 def get_machine_info_by_tet_file_name(txt_file_path: str):
@@ -119,16 +146,19 @@ def get_machine_info_by_tet_file_name(txt_file_path: str):
         return log_point, machine_name, lot_number, pin_package
 
 
-def check_list_structure(item_list):
+def check_item_list(item_list):
     new_item_list = list()
     for i, item in enumerate(item_list):
-        if item[:-3] == "txt" and item_list[i + 1][-3:] == "txt" and i != len(item_list) - 1:
+        if (
+            item[0][-3:] == "txt"
+            and i < len(item_list) - 1
+            and item_list[i + 1][0][-3:] == "txt"
+        ):
+            pass
+        elif item[0][-3:] == "txt" and i == len(item_list) - 1:
             pass
         else:
             new_item_list.append(item)
-
-        if i == len(item_list) - 1 and item[-3:] == "txt":
-            pass
     return new_item_list
 
 
@@ -138,10 +168,14 @@ def main():
     all_item_created_time_list = (
         all_txt_file_created_time_list + all_image_file_created_time_list
     )
-    if all_item_created_time_list:
-        all_item_created_time_list = sorted(all_item_created_time_list, key=sort_func)
-        all_item_created_time_list = check_list_structure(all_item_created_time_list)
-        gen_xml_file(all_item_created_time_list)
+    all_item_created_time_list = sorted(all_item_created_time_list, key=sort_func)
+    all_item_created_time_list = check_item_list(all_item_created_time_list)
+    # pprint(all_item_created_time_list)
+    gen_xml_file(all_item_created_time_list)
+
+    if not os.path.isdir("After_Convert"):
+        os.mkdir("After_Convert")
+    rename(all_item_created_time_list)
 
 
 main()
